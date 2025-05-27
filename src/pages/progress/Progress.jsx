@@ -470,84 +470,124 @@ export default function Progress() {
               <Typography variant="h6" color="text.secondary" gutterBottom>
                 Overview
               </Typography>
-              <Grid container spacing={3}>
-                <Grid item xs={12} sm={6} md={4}>
+              <Grid container spacing={{ xs: 2, sm: 3 }}>
+                {/* Completed Tasks Card */}
+                <Grid item xs={12} sm={6} md={4} sx={{ display: 'flex' }}>
                   <Paper 
                     elevation={2} 
                     sx={{ 
-                      p: 3, 
-                      height: '180px',
+                      p: { xs: 2, sm: 3 },
+                      height: { xs: 'auto', sm: '180px' },
+                      minHeight: { xs: '140px' },
+                      width: '100%',
                       borderRadius: 2,
                       backgroundColor: 'white',
                       borderLeft: '4px solid #4caf50',
                       display: 'flex',
                       flexDirection: 'column',
-                      justifyContent: 'space-between'
+                      justifyContent: 'space-between',
+                      transition: 'transform 0.2s, box-shadow 0.2s',
+                      '&:hover': {
+                        transform: 'translateY(-4px)',
+                        boxShadow: 3
+                      }
                     }}
                   >
                     <Box display="flex" alignItems="center" mb={2}>
-                      <CompletedIcon color="success" sx={{ mr: 1, fontSize: 24 }} />
-                      <Typography variant="h6" sx={{ fontWeight: 600 }}>Completed</Typography>
+                      <CompletedIcon color="success" sx={{ mr: 1, fontSize: { xs: 20, sm: 24 } }} />
+                      <Typography variant="h6" sx={{ fontWeight: 600, fontSize: { xs: '1rem', sm: '1.1rem' } }}>Completed</Typography>
                     </Box>
                     <Box sx={{ mt: 1 }}>
-                      <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 0.5 }}>{completedTasks}</Typography>
-                      <Typography variant="body2" color="text.secondary">
+                      <Typography variant="h4" sx={{ 
+                        fontWeight: 'bold', 
+                        mb: 0.5,
+                        fontSize: { xs: '1.75rem', sm: '2.125rem' }
+                      }}>
+                        {completedTasks}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.8rem', sm: '0.875rem' } }}>
                         {tasks.length > 0 ? `${Math.round((completedTasks / tasks.length) * 100)}% of total` : 'No tasks yet'}
                       </Typography>
                     </Box>
                   </Paper>
                 </Grid>
 
-                <Grid item xs={12} sm={6} md={4}>
+                {/* Pending Tasks Card */}
+                <Grid item xs={12} sm={6} md={4} sx={{ display: 'flex' }}>
                   <Paper 
                     elevation={2} 
                     sx={{ 
-                      p: 3, 
-                      height: '180px',
+                      p: { xs: 2, sm: 3 },
+                      height: { xs: 'auto', sm: '180px' },
+                      minHeight: { xs: '140px' },
+                      width: '100%',
                       borderRadius: 2,
                       backgroundColor: 'white',
                       borderLeft: '4px solid #ff9800',
                       display: 'flex',
                       flexDirection: 'column',
-                      justifyContent: 'space-between'
+                      justifyContent: 'space-between',
+                      transition: 'transform 0.2s, box-shadow 0.2s',
+                      '&:hover': {
+                        transform: 'translateY(-4px)',
+                        boxShadow: 3
+                      }
                     }}
                   >
                     <Box display="flex" alignItems="center" mb={2}>
-                      <PendingIcon color="warning" sx={{ mr: 1, fontSize: 24 }} />
-                      <Typography variant="h6" sx={{ fontWeight: 600 }}>Pending</Typography>
+                      <PendingIcon color="warning" sx={{ mr: 1, fontSize: { xs: 20, sm: 24 } }} />
+                      <Typography variant="h6" sx={{ fontWeight: 600, fontSize: { xs: '1rem', sm: '1.1rem' } }}>Pending</Typography>
                     </Box>
                     <Box sx={{ mt: 1 }}>
-                      <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 0.5 }}>{pendingTasks}</Typography>
-                      <Typography variant="body2" color="text.secondary">
+                      <Typography variant="h4" sx={{ 
+                        fontWeight: 'bold', 
+                        mb: 0.5,
+                        fontSize: { xs: '1.75rem', sm: '2.125rem' }
+                      }}>
+                        {pendingTasks}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.8rem', sm: '0.875rem' } }}>
                         {tasks.length > 0 ? `${Math.round((pendingTasks / tasks.length) * 100)}% of total` : 'No tasks yet'}
                       </Typography>
                     </Box>
                   </Paper>
                 </Grid>
 
-                <Grid item xs={12} sm={6} md={4}>
+                {/* Productivity Card */}
+                <Grid item xs={12} sm={6} md={4} sx={{ display: 'flex' }}>
                   <Paper 
                     elevation={2} 
                     sx={{ 
-                      p: 3, 
-                      height: '180px',
+                      p: { xs: 2, sm: 3 },
+                      height: { xs: 'auto', sm: '180px' },
+                      minHeight: { xs: '140px' },
+                      width: '100%',
                       borderRadius: 2,
                       backgroundColor: 'white',
                       borderLeft: '4px solid #2196f3',
                       display: 'flex',
                       flexDirection: 'column',
-                      justifyContent: 'space-between'
+                      justifyContent: 'space-between',
+                      transition: 'transform 0.2s, box-shadow 0.2s',
+                      '&:hover': {
+                        transform: 'translateY(-4px)',
+                        boxShadow: 3
+                      }
                     }}
                   >
                     <Box display="flex" alignItems="center" mb={2}>
-                      <TrendingUpIcon color="info" sx={{ mr: 1, fontSize: 24 }} />
-                      <Typography variant="h6" sx={{ fontWeight: 600 }}>Productivity</Typography>
+                      <TrendingUpIcon color="info" sx={{ mr: 1, fontSize: { xs: 20, sm: 24 } }} />
+                      <Typography variant="h6" sx={{ fontWeight: 600, fontSize: { xs: '1rem', sm: '1.1rem' } }}>Productivity</Typography>
                     </Box>
                     <Box sx={{ mt: 1 }}>
-                      <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 0.5 }}>
+                      <Typography variant="h4" sx={{ 
+                        fontWeight: 'bold', 
+                        mb: 0.5,
+                        fontSize: { xs: '1.75rem', sm: '2.125rem' }
+                      }}>
                         {tasks.length > 0 ? `${Math.round((completedTasks / tasks.length) * 100)}%` : '0%'}
                       </Typography>
-                      <Typography variant="body2" color="text.secondary">
+                      <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.8rem', sm: '0.875rem' } }}>
                         Overall completion rate
                       </Typography>
                     </Box>
