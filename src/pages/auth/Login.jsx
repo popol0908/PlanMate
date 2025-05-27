@@ -194,7 +194,7 @@ function LoginPage() {
           <Box sx={{ textAlign: 'center', mb: 4 }}>
             <AppLogo />
             <Typography variant="h4" component="h1" sx={styles.title}>
-              Welcome back
+              Welcome!
             </Typography>
             <Typography variant="body1" sx={styles.subtitle}>
               Sign in to your account to continue
