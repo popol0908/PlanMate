@@ -41,21 +41,45 @@ export function AuthProvider({ children }) {
   }
 
   async function login(email, password, rememberMe = false) {
-    // Set persistence based on remember me
-    await setPersistence(auth, rememberMe ? browserLocalPersistence : browserSessionPersistence);
-    
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    
-    // Fetch additional user data from Firestore
-    const userDoc = await getDoc(doc(db, 'users', userCredential.user.uid));
-    if (userDoc.exists()) {
-      // Update the user object with additional data
-      setCurrentUser({
-        ...userCredential.user,
-        ...userDoc.data()
-      });
+    try {
+      // Set persistence based on remember me
+      await setPersistence(auth, rememberMe ? browserLocalPersistence : browserSessionPersistence);
+      
+      const userCredential = await signInWithEmailAndPassword(auth, email, password)
+        .catch(error => {
+          // Handle specific authentication errors
+          switch (error.code) {
+            case 'auth/wrong-password':
+              throw new Error('The password you entered is incorrect. Please try again or reset your password.');
+            case 'auth/user-not-found':
+              throw new Error('No account found with this email address. Please check your email or sign up for a new account.');
+            case 'auth/too-many-requests':
+              throw new Error('Access to this account has been temporarily disabled due to too many failed login attempts. Please try again later or reset your password.');
+            case 'auth/user-disabled':
+              throw new Error('This account has been disabled. Please contact support for assistance.');
+            case 'auth/invalid-email':
+              throw new Error('The email address is not valid. Please check your email and try again.');
+            case 'auth/invalid-credential':
+              throw new Error('The provided authentication credentials are invalid. Please check your email and password.');
+            default:
+              throw new Error('Failed to sign in. Please check your credentials and try again.');
+          }
+        });
+
+      // Fetch additional user data from Firestore
+      const userDoc = await getDoc(doc(db, 'users', userCredential.user.uid));
+      if (userDoc.exists()) {
+        // Update the user object with additional data
+        setCurrentUser({
+          ...userCredential.user,
+          ...userDoc.data()
+        });
+      }
+      return userCredential;
+    } catch (error) {
+      // Re-throw the error to be handled by the component
+      throw error;
     }
-    return userCredential;
   }
   
   async function resetPassword(email) {

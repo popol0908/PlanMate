@@ -80,13 +80,43 @@ function LoginPage() {
     try {
       setError('');
       setLoading(true);
+      
+      // Basic client-side validation
+      if (!email) {
+        throw new Error('Please enter your email address');
+      }
+      if (!password) {
+        throw new Error('Please enter your password');
+      }
+      
       await login(email, password, rememberMe);
-      navigate('/');  // Navigate to home page after successful login
+      
+      // Clear sensitive data from state
+      setPassword('');
+      
+      // Navigate to home page after successful login
+      navigate('/', { replace: true });
     } catch (error) {
-      console.error('Failed to log in:', error);
-      setError(error.message || 'Failed to log in. Please check your credentials.');
+      console.error('Login error:', error);
+      
+      // Use the error message from the auth function or a fallback message
+      setError(error.message || 'An unexpected error occurred. Please try again.');
+      
+      // Focus the email or password field based on the error
+      try {
+        if (error.message.toLowerCase().includes('email')) {
+          const emailInput = document.getElementById('email-input');
+          if (emailInput) emailInput.focus();
+        } else if (error.message.toLowerCase().includes('password')) {
+          const passwordInput = document.getElementById('password-input');
+          if (passwordInput) passwordInput.focus();
+        }
+      } catch (focusError) {
+        console.warn('Could not focus input:', focusError);
+      }
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }
 
   async function handlePasswordReset(e) {
@@ -179,6 +209,7 @@ function LoginPage() {
 
           <Box component="form" onSubmit={handleSubmit} sx={styles.form}>
             <TextField
+              id="email-input"
               fullWidth
               label="Email address"
               variant="outlined"
@@ -186,19 +217,23 @@ function LoginPage() {
               onChange={(e) => setEmail(e.target.value)}
               required
               type="email"
-              autoComplete="email"
+              autoComplete="username"
               autoFocus
               InputLabelProps={{
                 shrink: true,
               }}
+              error={error.toLowerCase().includes('email')}
             />
 
             <TextField
+              id="password-input"
               fullWidth
               label="Password"
               variant="outlined"
               type={showPassword ? 'text' : 'password'}
               value={password}
+              autoComplete="current-password"
+              error={error.toLowerCase().includes('password')}
               onChange={(e) => setPassword(e.target.value)}
               required
               InputLabelProps={{
