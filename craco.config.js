@@ -1,7 +1,7 @@
 module.exports = {
   webpack: {
     configure: (webpackConfig) => {
-      // Add fallback for Node.js core modules
+
       webpackConfig.resolve.fallback = {
         ...webpackConfig.resolve.fallback,
         stream: require.resolve('stream-browserify'),

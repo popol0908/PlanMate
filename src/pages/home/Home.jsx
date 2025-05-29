@@ -22,7 +22,6 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { format, isSameDay } from 'date-fns';
 import Layout from '../../components/common/Layout';
 
-// Custom hook to fetch tasks
 function useTaskData(currentUser) {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -39,7 +38,6 @@ function useTaskData(currentUser) {
       where('userId', '==', currentUser.uid)
     );
 
-    // Use onSnapshot for real-time updates
     const unsubscribe = onSnapshot(q, 
       (querySnapshot) => {
         const tasksList = [];
@@ -55,7 +53,6 @@ function useTaskData(currentUser) {
       }
     );
 
-    // Cleanup subscription on unmount
     return () => unsubscribe();
   }, [currentUser]);
 
@@ -68,19 +65,16 @@ export default function Home() {
   const navigate = useNavigate();
   const { tasks, loading } = useTaskData(currentUser);
   
-  // Filter incomplete tasks with useMemo to prevent unnecessary recalculations
   const remainingCount = React.useMemo(() => {
     return tasks.filter(task => !task.completed).length;
   }, [tasks]);
 
-  // Get tasks for the selected date with proper date comparison
   const tasksForSelectedDate = React.useMemo(() => {
     if (!selectedDate) return [];
     
     return tasks.filter(task => {
       if (!task.dueDate) return false;
       try {
-        // Ensure we're working with Date objects
         const taskDate = task.dueDate.toDate ? task.dueDate.toDate() : new Date(task.dueDate);
         return isSameDay(taskDate, selectedDate);
       } catch (error) {
@@ -105,7 +99,6 @@ export default function Home() {
     );
   }
 
-  // Get user's display name or fallback to email username
   const getDisplayName = () => {
     if (currentUser?.displayName) {
       return currentUser.displayName;

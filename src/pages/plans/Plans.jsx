@@ -66,19 +66,15 @@ export default function Plans() {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
 
-  // Filter tasks based on status and priority
   const filteredTasks = tasks.filter(task => {
-    // Apply status filter
     if (statusFilter === 'active' && task.completed) return false;
     if (statusFilter === 'completed' && !task.completed) return false;
     
-    // Apply priority filter if set
     if (priorityFilter && task.priority !== priorityFilter) return false;
     
     return true;
   });
 
-  // Sort tasks
   const sortedTasks = [...filteredTasks].sort((a, b) => {
     let comparison = 0;
     
@@ -94,7 +90,6 @@ export default function Plans() {
     return sortOrder === 'asc' ? comparison : -comparison;
   });
 
-  // Priority styles based on priority level
   const getPriorityStyles = (priority) => {
     const styles = {
       high: {
@@ -122,7 +117,6 @@ export default function Plans() {
     return styles[priority] || {};
   };
 
-  // Priority chip component
   const PriorityChip = ({ priority }) => {
     const priorityColors = {
       high: 'error',
@@ -185,7 +179,6 @@ export default function Plans() {
     setPriority('medium');
   };
 
-  // Function to check if a date is today
   const isToday = (someDate) => {
     const today = new Date();
     return someDate.getDate() === today.getDate() &&
@@ -196,7 +189,6 @@ export default function Plans() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // If the selected date is today, validate the time is in the future
     if (isToday(dueDate)) {
       const now = new Date();
       const [startHours, startMinutes] = startTime.split(':').map(Number);
@@ -212,7 +204,6 @@ export default function Plans() {
     setLoading(true);
 
     try {
-      // Create a new date object with the selected date and time components
     const [startHours, startMinutes] = startTime.split(':').map(Number);
     const taskDueDate = new Date(dueDate);
     taskDueDate.setHours(startHours, startMinutes, 0, 0);
@@ -250,14 +241,11 @@ export default function Plans() {
     setTitle(task.title);
     setDescription(task.description || '');
     
-    // Parse the due date correctly, handling both string and Date objects
     const taskDueDate = task.dueDate ? new Date(task.dueDate) : new Date();
     setDueDate(taskDueDate);
     
-    // Set the time from the task's startTime or use default
     if (task.startTime) {
       setStartTime(task.startTime);
-      // Update the dueDate's time to match startTime for accurate display
       const [hours, minutes] = task.startTime.split(':').map(Number);
       taskDueDate.setHours(hours, minutes, 0, 0);
     } else {
@@ -301,11 +289,9 @@ export default function Plans() {
           updatedAt: new Date().toISOString()
         };
         
-        // Only set completedAt if we're marking as complete
         if (!taskToComplete.completed) {
           updates.completedAt = new Date().toISOString();
         } else {
-          // If unmarking as complete, remove the completedAt timestamp
           updates.completedAt = null;
         }
         
@@ -321,7 +307,6 @@ export default function Plans() {
 
   const toggleComplete = async (task) => {
     if (task.completed) {
-      // If unchecking, no need for confirmation
       try {
         const taskRef = doc(db, 'tasks', task.id);
         await updateDoc(taskRef, {
@@ -333,7 +318,6 @@ export default function Plans() {
         console.error('Error updating task: ', error);
       }
     } else {
-      // Show confirmation for marking as complete
       handleCompleteClick(task);
     }
   };
@@ -373,7 +357,7 @@ export default function Plans() {
               fullWidth
               sx={{ mb: 2 }}
             >
-              <ToggleButton value="active">Active</ToggleButton>
+              <ToggleButton value="active">Pending</ToggleButton>
               <ToggleButton value="completed">Completed</ToggleButton>
             </ToggleButtonGroup>
           </Box>
@@ -466,7 +450,6 @@ export default function Plans() {
                     checked={task.completed || false}
                     onChange={() => toggleComplete(task)}
                     onClick={(e) => {
-                      // Only prevent default if we're checking (not unchecking)
                       if (!task.completed) {
                         e.preventDefault();
                         handleCompleteClick(task);
@@ -489,8 +472,7 @@ export default function Plans() {
                         variant="subtitle1" 
                         sx={{
                           fontWeight: 600,
-                          color: task.priority === 'high' ? 'error.main' : 'text.primary',
-                          textDecoration: task.completed ? 'line-through' : 'none',
+                          color: task.priority === 'high' ? 'error.main' : 'text.primary'
                         }}
                       >
                         {task.title}
@@ -510,9 +492,6 @@ export default function Plans() {
                             <Typography 
                               variant="body2" 
                               color="text.secondary"
-                              sx={{
-                                textDecoration: task.completed ? 'line-through' : 'none',
-                              }}
                             >
                               {new Date(task.dueDate).toLocaleDateString()}
                             </Typography>
@@ -522,9 +501,6 @@ export default function Plans() {
                             <Typography 
                               variant="body2" 
                               color="text.secondary"
-                              sx={{
-                                textDecoration: task.completed ? 'line-through' : 'none',
-                              }}
                             >
                               {task.startTime} - {task.endTime}
                             </Typography>
@@ -536,19 +512,16 @@ export default function Plans() {
                             variant="body1" 
                             sx={{
                               mt: 1.5,
-                              mr: 8, // Add right margin to prevent overlap with buttons
+                              mr: 8,
                               fontStyle: 'normal',
                               fontWeight: 400,
                               lineHeight: 1.6,
                               color: (theme) => theme.palette.mode === 'dark' 
                                 ? 'rgba(255, 255, 255, 0.9)' 
                                 : 'rgba(0, 0, 0, 0.85)',
-                              textDecoration: task.completed ? 'line-through' : 'none',
-                              backgroundColor: (theme) => task.completed 
-                                ? 'transparent' 
-                                : theme.palette.mode === 'dark' 
-                                  ? 'rgba(255, 255, 255, 0.06)' 
-                                  : 'rgba(0, 0, 0, 0.04)',
+                              backgroundColor: (theme) => theme.palette.mode === 'dark' 
+                                ? 'rgba(255, 255, 255, 0.06)' 
+                                : 'rgba(0, 0, 0, 0.04)',
                               p: 1.5,
                               borderRadius: 1,
                               borderLeft: (theme) => `3px solid ${theme.palette.mode === 'dark' 
@@ -556,7 +529,7 @@ export default function Plans() {
                                 : 'rgba(0, 0, 0, 0.1)'}`,
                               boxShadow: (theme) => theme.shadows[1],
                               transition: 'all 0.2s ease',
-                              maxWidth: 'calc(100% - 100px)', // Ensure it doesn't go under buttons
+                              maxWidth: 'calc(100% - 100px)',
                               wordWrap: 'break-word',
                               '&:hover': {
                                 backgroundColor: (theme) => theme.palette.mode === 'dark' 

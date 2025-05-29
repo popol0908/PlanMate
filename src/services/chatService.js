@@ -1,11 +1,9 @@
 import { sendMessageToGemini, resetConversation as resetGeminiConversation } from './geminiService';
 
-// Simple message history to maintain context
 let messageHistory = [];
 
 export const sendMessageToAI = async (messages) => {
   try {
-    // Get the latest user message (last in the array)
     const latestMessage = Array.isArray(messages) && messages.length > 0 
       ? messages[messages.length - 1]?.parts?.[0]?.text || ''
       : '';
@@ -15,13 +13,11 @@ export const sendMessageToAI = async (messages) => {
       throw new Error('Please enter a message');
     }
     
-    // Format the message for Gemini
     const userMessage = {
       role: 'user',
       parts: [{ text: latestMessage }]
     };
     
-    // Send message to Gemini
     const response = await sendMessageToGemini(userMessage);
     
     if (!response) {

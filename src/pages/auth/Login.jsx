@@ -1,4 +1,3 @@
-// In src/pages/auth/Login.jsx
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
@@ -34,7 +33,6 @@ import { signInWithGoogle } from '../../config/firebase';
 import { authTheme, authPageStyles as styles } from '../../theme/authTheme';
 import { ThemeProvider } from '@mui/material/styles';
 
-// Replace with your actual logo
 const AppLogo = () => (
   <Box sx={styles.logoContainer}>
     <Box 
@@ -43,7 +41,6 @@ const AppLogo = () => (
       alt="PlanMate" 
       sx={styles.logo} 
       onError={(e) => {
-        // Fallback to text if image fails to load
         e.target.style.display = 'none';
         e.target.nextSibling.style.display = 'block';
       }} 
@@ -81,7 +78,6 @@ function LoginPage() {
       setError('');
       setLoading(true);
       
-      // Basic client-side validation
       if (!email) {
         throw new Error('Please enter your email address');
       }
@@ -91,18 +87,14 @@ function LoginPage() {
       
       await login(email, password, rememberMe);
       
-      // Clear sensitive data from state
       setPassword('');
       
-      // Navigate to home page after successful login
       navigate('/', { replace: true });
     } catch (error) {
       console.error('Login error:', error);
       
-      // Use the error message from the auth function or a fallback message
       setError(error.message || 'An unexpected error occurred. Please try again.');
       
-      // Focus the email or password field based on the error
       try {
         if (error.message.toLowerCase().includes('email')) {
           const emailInput = document.getElementById('email-input');

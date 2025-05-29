@@ -28,10 +28,8 @@ const ChatWidget = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const handleResetConversation = () => {
-    // Reset the chat history in the service
     resetChatHistory();
     
-    // Reset the UI messages
     setMessages([{
       id: 1, 
       text: 'Hello! I\'m your PlanMate AI assistant. How can I help you with your tasks and productivity today?', 
@@ -53,7 +51,6 @@ const ChatWidget = () => {
   const toggleChat = useCallback(() => {
     setIsOpen(prev => !prev);
     if (!isOpen) {
-      // Focus input when opening chat
       setTimeout(() => {
         inputRef.current?.focus();
       }, 300);
@@ -72,14 +69,12 @@ const ChatWidget = () => {
       timestamp: new Date()
     };
 
-    // Add user message immediately
     setMessages(prev => [...prev, userMessage]);
     setMessage('');
     setError(null);
     setIsLoading(true);
 
     try {
-      // Send message to Gemini
       const aiResponse = await sendMessageToAI([{
         role: 'user',
         parts: [{ text: trimmedMessage }]
@@ -115,12 +110,10 @@ const ChatWidget = () => {
     }
   };
 
-  // Auto-scroll to bottom when messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Handle keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {

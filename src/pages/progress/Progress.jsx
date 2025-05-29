@@ -64,7 +64,7 @@ export default function Progress() {
   const getStartOfWeek = (date) => {
     const d = new Date(date);
     const day = d.getDay();
-    const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Adjust when day is Sunday
+    const diff = d.getDate() - day + (day === 0 ? -6 : 1);
     return new Date(d.setDate(diff));
   };
   
@@ -103,16 +103,13 @@ export default function Progress() {
       
       const completedAt = task.completedAt?.toDate ? task.completedAt.toDate() : new Date(task.completedAt);
       
-      // Count tasks completed this week
       if (completedAt >= startOfWeek) {
         completedThisWeek++;
         
-        // Update daily completion count
-        const dayOfWeek = completedAt.getDay(); // 0 = Sunday, 1 = Monday, etc.
+        const dayOfWeek = completedAt.getDay();
         dailyCompletion[dayOfWeek] = (dailyCompletion[dayOfWeek] || 0) + 1;
       }
       
-      // Count all tasks with due dates this week
       if (task.dueDate) {
         const dueDate = new Date(task.dueDate);
         if (dueDate >= startOfWeek && dueDate <= now) {
@@ -121,16 +118,13 @@ export default function Progress() {
       }
     });
     
-    // If no tasks with due dates this week, use all tasks for percentage
     if (totalTasksThisWeek === 0) {
       totalTasksThisWeek = tasks.length;
     }
     
-    // Ensure we have 7 days of data (Sunday to Saturday)
-    // Reorder to start with Monday (index 1) and end with Sunday (index 0)
     const orderedDays = [
-      ...dailyCompletion.slice(1), // Monday to Saturday
-      dailyCompletion[0] // Sunday
+      ...dailyCompletion.slice(1),
+      dailyCompletion[0]
     ];
     
     return {
@@ -141,7 +135,6 @@ export default function Progress() {
     };
   }, [tasks]);
   
-  // Log when tasks change
   useEffect(() => {
     console.log('Tasks updated:', {
       totalTasks: tasks.length,
@@ -150,14 +143,12 @@ export default function Progress() {
     });
   }, [tasks]);
   
-  // Get completed tasks with valid timestamps
   const completedTasksWithTime = React.useMemo(() => {
     const completed = tasks.filter(t => t.completed && t.completedAt);
     console.log('Filtered completed tasks with timestamps:', completed);
     return completed;
   }, [tasks]);
   
-  // Helper function to calculate task duration in minutes
   const calculateTaskDuration = (task) => {
     if (!task.createdAt || !task.completedAt) return null;
     
@@ -165,26 +156,23 @@ export default function Progress() {
       const completedAt = task.completedAt?.toDate ? task.completedAt.toDate() : new Date(task.completedAt);
       const createdAt = task.createdAt?.toDate ? task.createdAt.toDate() : new Date(task.createdAt);
       
-      // Validate dates
       if (isNaN(completedAt.getTime()) || isNaN(createdAt.getTime())) {
         console.warn('Invalid date format for task:', task.id);
         return null;
       }
       
-      // Ensure completedAt is after createdAt
       if (completedAt <= createdAt) {
         console.warn('Completion time is not after creation time for task:', task.id);
         return null;
       }
       
-      return completedAt - createdAt; // Duration in milliseconds
+      return completedAt - createdAt;
     } catch (error) {
       console.error('Error calculating task duration:', error, task);
       return null;
     }
   };
 
-  // Calculate productivity insights with useMemo
   const productivityInsights = React.useMemo(() => {
     console.log('Recalculating productivity insights...');
     console.log('Completed tasks with time:', completedTasksWithTime);
@@ -205,7 +193,6 @@ export default function Progress() {
     let totalDurationMs = 0;
     let validTasks = 0;
 
-    // First pass: calculate durations and count valid tasks
     const tasksWithDuration = completedTasksWithTime.map(task => {
       const duration = calculateTaskDuration(task);
       if (duration !== null) {
@@ -215,7 +202,6 @@ export default function Progress() {
       return { ...task, duration };
     });
 
-    // Second pass: calculate time of day and day of week stats
     tasksWithDuration.forEach(task => {
       if (task.duration === null) return;
       
@@ -224,13 +210,11 @@ export default function Progress() {
         const hours = completedAt.getHours();
         const day = completedAt.getDay();
         
-        // Categorize by time of day
         if (hours >= 5 && hours < 12) timeCounts.morning++;
         else if (hours >= 12 && hours < 17) timeCounts.afternoon++;
         else if (hours >= 17 && hours < 21) timeCounts.evening++;
         else timeCounts.night++;
 
-        // Count by day of week
         dayCounts[day]++;
       } catch (error) {
         console.error('Error processing task:', error, task);
@@ -241,15 +225,12 @@ export default function Progress() {
     console.log('Day counts:', dayCounts);
     console.log(`Total valid tasks: ${validTasks}, Total duration (ms): ${totalDurationMs}`);
 
-    // Find most productive time
     const mostProductiveTime = Object.entries(timeCounts).reduce((a, b) => 
       a[1] > b[1] ? a : b, ['morning', 0]
     );
 
-    // Find best day
     const bestDayIndex = dayCounts.indexOf(Math.max(...dayCounts));
     
-    // Removed average time per task calculation
 
     const result = {
       mostProductiveTime: {
@@ -303,13 +284,11 @@ export default function Progress() {
     );
   }
 
-  // Calculate statistics
   const completedTasks = tasks.filter(task => task.completed).length;
   const pendingTasks = tasks.length - completedTasks;
   const highPriorityTasks = tasks.filter(task => task.priority === 'high');
   const completedHighPriority = highPriorityTasks.filter(task => task.completed).length;
 
-  // Prepare data for the weekly completion chart
   const getDayName = (date) => {
     return date.toLocaleDateString('en-US', { weekday: 'short' });
   };
@@ -341,14 +320,12 @@ export default function Progress() {
     };
   });
 
-  // Prepare data for MUI X Charts
   const weeklyChartData = weeklyData.map(day => ({
     day: day.day,
     completed: day.completed,
     total: day.total
   }));
 
-  // Calculate completed tasks by priority
   const completedByPriority = {
     high: tasks.filter(t => t.priority === 'high' && t.completed).length,
     medium: tasks.filter(t => t.priority === 'medium' && t.completed).length,
@@ -361,7 +338,6 @@ export default function Progress() {
     { id: 2, value: tasks.filter(t => t.priority === 'low').length, label: 'Low', color: theme.palette.success.main }
   ];
 
-  // Calculate productivity insights
   const calculateProductivityInsights = (tasksWithTime) => {
     console.log('Calculating productivity insights...');
     
@@ -376,7 +352,6 @@ export default function Progress() {
     
     console.log(`Processing ${tasksWithTime.length} completed tasks`);
     
-    // Calculate most productive time of day
     const timeCounts = { morning: 0, afternoon: 0, evening: 0, night: 0 };
     const dayCounts = Array(7).fill(0);
     const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -389,16 +364,13 @@ export default function Progress() {
         const hours = completedAt.getHours();
         const day = completedAt.getDay();
         
-        // Categorize by time of day
         if (hours >= 5 && hours < 12) timeCounts.morning++;
         else if (hours >= 12 && hours < 17) timeCounts.afternoon++;
         else if (hours >= 17 && hours < 21) timeCounts.evening++;
         else timeCounts.night++;
 
-        // Count by day of week
         dayCounts[day]++;
 
-        // Calculate task duration if available
         if (task.createdAt) {
           const createdAt = task.createdAt?.toDate ? task.createdAt.toDate() : new Date(task.createdAt);
           const duration = completedAt - createdAt;
@@ -414,15 +386,12 @@ export default function Progress() {
     console.log('Day counts:', dayCounts);
     console.log('Total duration (ms):', totalDuration);
 
-    // Find most productive time
     const mostProductiveTime = Object.entries(timeCounts).reduce((a, b) => 
       a[1] > b[1] ? a : b, ['morning', 0]
     );
 
-    // Find best day
     const bestDayIndex = dayCounts.indexOf(Math.max(...dayCounts));
     
-    // Calculate average time per task in minutes
     const avgTimeMs = processedTasks > 0 ? totalDuration / processedTasks : 0;
     const avgHours = Math.floor(avgTimeMs / (1000 * 60 * 60));
     const avgMinutes = Math.floor((avgTimeMs % (1000 * 60 * 60)) / (1000 * 60));
@@ -446,7 +415,6 @@ export default function Progress() {
     return result;
   };
 
-  // Get recent completed tasks
   const recentCompleted = [...tasks]
     .filter(t => t.completed)
     .sort((a, b) => new Date(b.completedAt || 0) - new Date(a.completedAt || 0))
@@ -791,7 +759,6 @@ export default function Progress() {
                           secondary={`Completed on ${new Date(task.completedAt?.toDate?.() || task.completedAt).toLocaleDateString()}`}
                           primaryTypographyProps={{
                             sx: {
-                              textDecoration: 'line-through',
                               color: 'text.secondary'
                             }
                           }}

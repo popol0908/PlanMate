@@ -20,7 +20,6 @@ import { signInWithGoogle } from '../../config/firebase';
 import { authTheme, authPageStyles as styles } from '../../theme/authTheme';
 import { ThemeProvider } from '@mui/material/styles';
 
-// Reuse the AppLogo component from Login
 const AppLogo = () => (
   <Box sx={styles.logoContainer}>
     <Box 
@@ -81,7 +80,6 @@ function SignUpPage() {
       navigate('/');
     } catch (error) {
       console.error('Google sign up error:', error);
-      // Don't show error if user closed the popup
       if (error.code !== 'auth/popup-closed-by-user') {
         setError(error.message || 'Failed to sign up with Google. Please try again.');
       }
